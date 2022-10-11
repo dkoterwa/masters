@@ -9,7 +9,7 @@
 Sys.setenv(LANG = "en")
 
 #Set working directory
-setwd("C:/Users/mchle/OneDrive - Wydział Nauk Ekonomicznych Uniwersytet Warszawski/!PRZEDMIOTY/SEDA/#1") #Desktop
+setwd("/Volumes/Macintosh HD – dane/GitHub/masters/first semester/Statistics and EDA") #Desktop
 
 ###################################################################
 #PDF and CDF#######################################################
@@ -21,7 +21,7 @@ setwd("C:/Users/mchle/OneDrive - Wydział Nauk Ekonomicznych Uniwersytet Warszaw
 #What is the share of the consumers that are younger than 40?
 
 #load the data
-pizza <- read.csv('Pizza.csv', 
+pizza <- read.csv('lab1/Pizza.csv', 
                   header=TRUE, 
                   sep=",", 
                   dec=".") 
@@ -96,8 +96,10 @@ data.frame(0:4, cdf)
 #Probability of finding exactly 2 raisins in a bun
 #We need to calculate the probability that exactly k=2 events occur in a bun, 
 #when we know that on average there are 3 raisins in a bun (lambda=3)
-dpois(0, 3)
-
+dpois(2, 3)
+ppois(3,3)
+1 - ppois(3,3)
+?ppois
 #Probability of finding more than 3 raisins in the bun
 #We need to calculate the probability that we find more than 3 raisins, i.e. 4,5,6, .... 
 #It is easier to calculate the probability of finding at most 3 raisins and substract it from 1 
@@ -220,6 +222,7 @@ plotdist(database$Temp, histo = TRUE, demp = TRUE)
 fit_n <- fitdist(database$Temp, "norm")
 fit_ln <- fitdist(database$Temp, "lnorm")
 fit_g  <- fitdist(database$Temp, "gamma")
+?fitdist
 summary(fit_n)
 summary(fit_ln)
 summary(fit_g)
