@@ -120,7 +120,7 @@ pdf <- density(logx)
 plot(pdf)
 
 
-
+setwd("/Volumes/Macintosh HD – dane/GitHub/masters/first semester/Statistics and EDA/lab2")
 #########################################################
 #Exercise 4: Use data on wages from the NYSE 
 #dataset for the US (data for 2010)
@@ -141,6 +141,7 @@ str(NLSY)
 
 #mean and median wages by sex
 aggregate(NLSY[,c(7)], list(NLSY$sex), mean)
+?aggregate
 aggregate(NLSY[,c(7)], list(NLSY$sex), median) # mean higher than median - rightskeewed distribution - we should proceed furhter with median
 
 #mean and median wages by race
