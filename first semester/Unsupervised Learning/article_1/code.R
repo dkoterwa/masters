@@ -18,7 +18,8 @@ library(RColorBrewer)
 library(Dict)
 library(fdm2id)
 library(showtext)
-
+library(png)
+library(magick)
 
 
 pick_colours = function (n) {
@@ -39,7 +40,6 @@ pick_colours = function (n) {
   return (list_of_colors)
   
 }
-
 
 contrast_image = function (dataframe, scalar_white, scalar_black){
   
@@ -62,7 +62,6 @@ contrast_image = function (dataframe, scalar_white, scalar_black){
   }
   return(dataframe)
 }
-
 
 draw_colours_dbscan = function(dataframe, n_clusters){
   
@@ -96,7 +95,6 @@ draw_colours_dbscan = function(dataframe, n_clusters){
   
   return(dataframe)
 }
-
 
 draw_colours = function(dataframe, n_clusters){
   
@@ -135,9 +133,8 @@ draw_colours = function(dataframe, n_clusters){
 Sys.setlocale("LC_ALL", 'en_GB.UTF-8')
 Sys.setenv(LANGUAGE='en')
 
-
 #loading image
-raw_image = readJPEG("deer.jpeg")
+raw_image = readJPEG("bobcat.jpeg")
 
 #checking dimensions to be sure that it's not a RGB image
 dim(raw_image)
@@ -171,6 +168,7 @@ img = image(raw_image, col  = colours) # plot in colours
 
 plot(silhouette(clara))
 
+
 #CLARA with contrasted image
 clara = clara(contrasted_image, 3)
 colours <- pick_colours(length(unique(clara$cluster)))
@@ -193,7 +191,7 @@ image(raw_image, col = colours) #drawing image
 
 
 #DB-SCAN with contrasted image
-db_scan = dbscan(contrasted_image, eps=0.6, MinPts=3) #performing dbscan
+db_scan = dbscan(contrasted_image, eps=0.27, MinPts=10) #performing dbscan
 
 
 df_image = data.frame(raw_image)
@@ -216,6 +214,7 @@ df_image = draw_colours(df_image, n_clusters = length(unique(mean_shift$assignme
 colours = df_image$color 
 
 image(raw_image, col = colours) #drawing image
+
 
 #MEAN SHIFT with contrasted image
 mean_shift = meanShift(contrasted_image, epsilonCluster=0.01)
@@ -254,3 +253,22 @@ colours = df_image$color
 
 image(raw_image, col = colours)
 
+
+#OVERLAYING IMAGES
+first = readPNG("screen1.png")
+second = readPNG("screen2.png")
+
+second[,,4] = 0.55
+
+png('test.png', width = 1, height = 1, units = 'in', res = 1000)
+  par(mai=c(0,0,0,0))
+  plot.new()
+  rasterImage(first, 0, 0, 1, 1)
+  rasterImage(second, 0, 0, 1, 1)
+  
+dev.off()
+
+
+#DISPLAY OVERLAYED IMAGE
+overlay = magick::image_read('overlay.png')
+print(overlay)
