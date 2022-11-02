@@ -5,7 +5,7 @@
 ################################################################################
 
 # changing the language to English
-Sys.setlocale("LC_ALL","English")
+Sys.setlocale("LC_ALL", 'en_GB.UTF-8')
 Sys.setenv(LANGUAGE='en')
 
 ################################################################################
