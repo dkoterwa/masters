@@ -1,6 +1,5 @@
 rm(list=ls())
 
-
 library(fpc)
 library(jpeg)
 library(imager)
@@ -21,6 +20,7 @@ library(showtext)
 library(png)
 library(magick)
 
+#Functions
 
 pick_colours = function (n) {
   
@@ -143,11 +143,11 @@ dim(raw_image)
 raw_image = t(apply(raw_image, 2, rev)) #otherwise the image will be rotated
 image(raw_image, col  = grey((0:dim(raw_image)[1])/dim(raw_image)[1]))
 
-
 #Contrasting image
 contrasted_image = contrast_image(raw_image, scalar_white = 1, scalar_black = 1.3)
 image(contrasted_image, col = grey((0:480)/480))
 
+#CLUSTERING
 
 #K-MEANS
 kmeans = kmeans(raw_image, centers = 2)
@@ -201,6 +201,8 @@ df_image$color = "" #setting a column for a color
 df_image = draw_colours_dbscan(df_image, n_clusters = length(unique(db_scan$cluster))) #sampling colors for clusters
 colours = df_image$color 
 
+fviz_cluster(db_scan, data = contrasted_image, main = 'DBSCAN cluster plot')
+
 image(raw_image, col = colours) #drawing image
 
 
@@ -212,6 +214,7 @@ df_image$color = ""
 
 df_image = draw_colours(df_image, n_clusters = length(unique(mean_shift$assignment))) #sampling colors for clusters
 colours = df_image$color 
+
 
 image(raw_image, col = colours) #drawing image
 
@@ -260,7 +263,7 @@ second = readPNG("screen2.png")
 
 second[,,4] = 0.55
 
-png('test.png', width = 1, height = 1, units = 'in', res = 1000)
+png('overlay.png', width = 1, height = 1, units = 'in', res = 1000)
   par(mai=c(0,0,0,0))
   plot.new()
   rasterImage(first, 0, 0, 1, 1)

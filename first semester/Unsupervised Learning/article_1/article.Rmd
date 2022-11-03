@@ -1,5 +1,5 @@
 ---
-title: "Theming with bslib and thematic"
+title: "Detecting animals on trail camera photographs using clustering methods"
 output: 
   html_document:
     code_folding: show
@@ -12,6 +12,7 @@ output:
         google: Prompt
       heading_font:
         google: Proza Libre
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -20,6 +21,25 @@ if (requireNamespace("thematic"))
 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
+
+# Overview
+
+This is an assignment created for Unsupervised Learning class. We were supposed to use clustering methods in order to analyze phenomena that are interesting for us.
+
+**My project is answering the question:** Are we able to detect animals photographed by a trail camera using various clustering methods?
+
+I will try to point out the animal seen on the photo by using couple of clustering methods, let's see if I will get even close to highlight only the animal, without any additional background.
+
+**The aim of this project** is not to cluster every pixel of the image correctly, but rather to highlight the animal. I did not set strict assumptions, for example I didn't use the same defined number of clusters for every algorithm. I was "juggling" with the parameters for every method to obtain the best results. If you want to create a project similar to this, feel free to change the values of parameters and try to get closer than me :)
+
+The images are loaded in grayscale because this is the format most often registered by a trail camera. Because of the shade and darkness existing in the woods, sensor in the camera detects the low level of light and turns on the IR flash. The result is a grayscale picture.
+
+Used methods: CLARA, DBSCAN, Mean Shift, Spectral Clustering
+
+Code and images are available on my [GitHub](https://github.com/dkoterwa/masters/tree/main/first%20semester/Unsupervised%20Learning/article_1)
+
+# Preproccessing
+
 ## Loading libraries
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(fpc)
@@ -41,19 +61,6 @@ library(fdm2id)
 library(showtext)
 library(magick)
 ```
-# Overview
-
-This is an assignment created for Unsupervised Learning class. We were supposed to use clustering methods in order to analyze phenomena that are interesting for us.
-
-**My project is answering the question:** Are we able to detect animals photographed by a trail camera using various clustering methods?
-
-I will try to point out the animal seen on the photo by using couple of clustering methods, let's see if I will get even close to highlight only the animal, without any additional background.
-
-The images are loaded in grayscale because this is the format most often registered by a trail camera. Because of the shade and darkness existing in the woods, sensor in the camera detects the low level of light and turns on the IR flash. The result is a grayscale picture.
-
-Used methods: CLARA, DBSCAN, Mean Shift, Spectral Clustering
-
-Code and images are available on my [GitHub](https://github.com/dkoterwa/masters/tree/main/first%20semester/Unsupervised%20Learning/article_1)
 
 ## Functions {.tabset .tabset-pills}
 
@@ -179,7 +186,6 @@ draw_colours = function(dataframe, n_clusters){
 }
 ```
 
-
 ## Loading images {.tabset .tabset-pills}
 
 Following article analyzes 2 images using various clustering methods. These are the photographs of bobcat and deer.
@@ -213,6 +219,7 @@ image(deer, col  = grey((0:dim(deer)[1])/dim(deer)[1]))
 
 ```
 
+## Contrasting images
 In order to increase the contrast of the image, I am using created function **contrast_image**.
 
 ```{r}
@@ -221,13 +228,13 @@ contrasted_image_bobcat = contrast_image(bobcat, scalar_white = 1.2, scalar_blac
 contrasted_image_deer = contrast_image(deer, scalar_white = 1, scalar_black = 1.3)
 ```
 
-## Clustering methods comparison
+# Clustering
 
 ## CLARA {.tabset .tabset-pills}
 
-Let's start with **CLARA**. The intuition behind this algorithm is the same as with PAM, but CLARA works faster with larger datasets, this is why I chose this version to work with images.
+Let's start with **CLARA**. The intuition behind this algorithm is the same as with **PAM**, but **CLARA** works faster with larger datasets, this is why I chose this version to work with images.
 
-With CLARA, we are randomly choosing a sample, applying PAM and choosing optimal medoids for this sample. We repeat these steps for defined number of iterations. Finally, we pick the set of medoids with the lowest cost.
+With **CLARA**, we are randomly choosing a sample, applying **PAM** and choosing optimal medoids for this sample. We repeat these steps for defined number of iterations. Finally, we pick the set of medoids with the lowest cost.
 
 
 ### Bobcat
@@ -256,7 +263,19 @@ colours <- pick_colours(length(unique(clara$cluster)))
 img = image(deer, col  = colours) # plot in colours
 ```
 
+## Silhouette plots of CLARA {.tabset .tabset-pills}
 
+### Bobcat
+```{r}
+clara = clara(contrasted_image_bobcat, 3)
+plot(silhouette(clara))
+```
+
+### Deer
+```{r}
+clara = clara(contrasted_image_deer, 3)
+plot(silhouette(clara))
+```
 
 ## DBSCAN {.tabset .tabset-pills}
 
@@ -307,9 +326,26 @@ colours = df_image$color
 image(deer, col = colours) #drawing image
 ```
 
-## MEAN SHIFT {.tabset .tabset-pills}
+## DBSCAN cluster plots {.tabset .tabset-pills}
 
-**Mean Shift** algorithm creates a radius around each point. Then, we calculate the mean position of the points (centroid) in the radius and move our point to this position. Points are "climbing" the steepest hills in our distribution. Mode is the peek of the hill.
+### Bobcat
+```{r}
+db_scan = dbscan(contrasted_image_bobcat, eps=0.4, MinPts=10) #performing dbscan
+fviz_cluster(db_scan, data = contrasted_image_bobcat, main = 'DBSCAN cluster plot (bobcat)')
+
+```
+
+### Deer
+```{r}
+db_scan = dbscan(contrasted_image_deer, eps=0.6, MinPts=3) #performing dbscan
+fviz_cluster(db_scan, data = contrasted_image_deer, main = 'DBSCAN cluster plot (deer)')
+
+```
+
+
+## Mean Shift {.tabset .tabset-pills}
+
+**Mean Shift** algorithm creates a radius around each point. Then, we calculate the mean position of the points (centroid) within the radius and move our point to this position. Points are "climbing" the steepest hills in our distribution. Mode is the peek of the hill.
 
 The visualization of the **Mean Shift** algorithm is shown below.
 
@@ -397,7 +433,7 @@ colours = df_image$color
 image(deer, col = colours)
 ```
 
-## Observations
+# Observations
 
 As we can see, every algorithm had different output. **CLARA** worked really well with clustering the body of a bobcat, where **DBSCAN** and **Mean Shift** showed that they can be useful in identifying edges of the body. **Spectral Clustering** has the poorest performance in this case, however we can also observe the edges of the animal, but mostly connected with the background.
 
@@ -405,7 +441,7 @@ When it comes to the deer, algorithms behave much worse when more noise is added
 
 On the beginning of this article I've stated that I want an algorithm to highlight an animal without any additional background. In my opinion, **DBSCAN** has done it pretty accurately with a bobcat. Let's transfer the clustered area to the real image.
 
-## Overlaying original image with clusters
+# Overlaying original image with clusters
 
 **DBSCAN** highlighted the bobcat in the most visible way compared to the other algorithms. Let's overlay the image of this animal with clusters to make it more lucid and to summarize this article.
 
@@ -419,3 +455,11 @@ print(overlay)
 **DBSCAN** worked pretty well with detecting the bobcat. However, we can observe how differently the methods behave on specific photos. Image of a deer is not a hard case, but there was no algorithm, which could handle it. **Unsupervised learning** is rarely used in image segmentation. There are plenty of supervised techniques, which record a higher performance. With supervision, we are able to easily check the accuracy of a given algorithm.
 
 **The second biggest drawback** of applying Unsupervised Learning to this problem is the fact that I had to tune parameters by myself in every case. You can observe values of epsilon like 0.4. I had to change the parameters a lot of times and check how it works with the specific image. With supervised learning, most often we posses a trained neural network, which is able to segment almost every type of a picture in a really efficient way.
+
+# References
+
+https://www.kdnuggets.com/2020/04/dbscan-clustering-algorithm-machine-learning.html
+
+https://en.wikipedia.org/wiki/Spectral_clustering
+
+https://ml-explained.com/blog/mean-shift-explained
