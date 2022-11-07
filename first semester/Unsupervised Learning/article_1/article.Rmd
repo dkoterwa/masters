@@ -4,9 +4,9 @@ output:
   html_document:
     code_folding: show
     theme:
-      bg: "#202123"
-      fg: "#B8BCC2"
-      primary: "#EA80FC"
+      bg: "#FFFFFF"
+      fg: "#000000"
+      primary: "#8000FF"
       secondary: "#00DAC6"
       base_font:
         google: Prompt
@@ -34,7 +34,7 @@ I will try to point out the animal seen on the photo by using couple of clusteri
 
 The images are loaded in grayscale because this is the format most often registered by a trail camera. Because of the shade and darkness existing in the woods, sensor in the camera detects the low level of light and turns on the IR flash. The result is a grayscale picture.
 
-Used methods: CLARA, DBSCAN, Mean Shift, Spectral Clustering
+**Used methods**: CLARA, DBSCAN, Mean Shift, Spectral Clustering
 
 Code and images are available on my [GitHub](https://github.com/dkoterwa/masters/tree/main/first%20semester/Unsupervised%20Learning/article_1)
 
@@ -457,6 +457,8 @@ print(overlay)
 **The second biggest drawback** of applying Unsupervised Learning to this problem is the fact that I had to tune parameters by myself in every case. You can observe values of epsilon like 0.4. I had to change the parameters a lot of times and check how it works with the specific image. With supervised learning, most often we posses a trained neural network, which is able to segment almost every type of a picture in a really efficient way.
 
 # References
+
+Zeng et al. Image segmentation using spectral clustering of Gaussian mixture models models, Neurocomputing, Volume 144, 2014, Pages 346-356.
 
 https://www.kdnuggets.com/2020/04/dbscan-clustering-algorithm-machine-learning.html
 
