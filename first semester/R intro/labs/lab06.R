@@ -480,7 +480,7 @@ clients = drop_na(clients)
 clients$Year_Birth[is.na(clients$Year_Birth)] <- median(clients$Year_Birth, na.rm = TRUE)
 # 4. a) Check that all missing observations have been completed. If not, repeat step 3. 
 # b) What code would you use to show all the rows which still have some missing data?
-clients$MntWines[is.na(clients$MntWines)] <- mean(clients$MntWines, na.rm = TRUE)
+clients[!complete.cases(clients),]
 # 5. a) Consider which variables are worth converting to a "factor" type? 
 # Hint: these will usually be text variables with a few specific, recurring 
 # values. They can also be variables that are represented by numbers, but do 
@@ -488,6 +488,9 @@ clients$MntWines[is.na(clients$MntWines)] <- mean(clients$MntWines, na.rm = TRUE
 # 2, 3, 4, which actually represent successive stages of education (logical sense) 
 # rather than the exact number of years of education (numerical sense). 
 # b) What code would you use to transform the Marital_Status variable (shortest code possible)?
+unique(clients$Marital_Status)
+clients$Marital_Status = factor(clients$Marital_Status, ordered = FALSE)
+clients$Marital_Status
 
 # 6. a) Consider which of the previously identified variables would be worth 
 # converting to an 'ordered factor' type (ordered categorical variable).
@@ -498,7 +501,14 @@ clients$MntWines[is.na(clients$MntWines)] <- mean(clients$MntWines, na.rm = TRUE
 # responses recorded using a Likert scale (https://en.wikipedia.org/wiki/Likert_scale). 
 # b) What code would you use to transform the Education variable? Let's assume that 
 # 2n means secondary education and graduation is equal to BA defence.
+unique(clients$Education)
+clients$Education=factor(clients$Education,levels=c('2n','Basic','Graduation','Master','PhD'),ordered=TRUE)
+
 
 # 7. Transform the variables identified in steps 5 and 6 into the appropriate classes.
 
 # 8. Save results for future reference! Use an RData file with name "clientsInR".
+save(clients, file = "clients.RData")
+
+summary(clients)
+help("!!")
